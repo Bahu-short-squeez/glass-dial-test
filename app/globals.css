@@ -1,0 +1,550 @@
+@font-face {
+  font-family: "Atacama";
+  src: url("/fonts/Atacama-Condensed.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@property --spin {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+:root {
+  --pill-w: 280px;
+  --pill-h: 90px;
+  --pill-r: 999px;
+
+  --font: "Atacama", ui-serif, Georgia, serif;
+  --size: 56px;
+  --tracking: -0.04em;
+  --color: rgba(10, 10, 10, 0.9);
+
+  --items: 14;
+  --step-angle: 25.7142857143deg;
+
+  --hold: 0.9s;
+  --move: 1.15s;
+  --step: calc(var(--hold) + var(--move));
+  --duration: calc(7 * var(--step));
+
+  --orbit-size: 1080px;
+  --orbit-radius: 360px;
+
+  /* hero placement */
+  --lens-x: 64.5%;
+  --lens-y: 50%;
+
+  /* pushes dial center right so only left hemisphere shows */
+  --orbit-center-shift-x: 355px;
+
+  /* alignment tweak so focused word sits in pill center */
+  --lens-orbit-nudge-x: -34px;
+  --lens-orbit-nudge-y: 0px;
+  --lens-invert-top-nudge-y: -40px;
+  --lens-invert-bottom-nudge-y: 60px;
+
+  /* image placement */
+  --dial-scale: 0.6;
+  --dial-x: -50px;
+  --dial-y: 86px;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+}
+
+/* ===============================
+   MAIN STAGE
+   =============================== */
+
+.dial-carousel-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+}
+
+.dial-carousel-img {
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  z-index: 1;
+  width: min(1100px, 88vw);
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  transform:
+    translate(var(--dial-x), calc(-50% + var(--dial-y)))
+    scale(var(--dial-scale));
+  transform-origin: center center;
+}
+
+.dial-carousel-text-area {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* ===============================
+   DIAL ORBIT AREAS
+   =============================== */
+
+.dial-orbit-container {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.dial-lens-orbit-invert-top,
+.dial-lens-orbit-invert-bottom,
+.dial-lens-orbit-center {
+  position: absolute;
+  inset: 0;
+}
+
+.dial-orbit-container .dial-orbit-wrapper,
+.dial-lens-orbit-invert-top .dial-orbit-wrapper,
+.dial-lens-orbit-invert-bottom .dial-orbit-wrapper,
+.dial-lens-orbit-center .dial-orbit-wrapper {
+  position: absolute;
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  top: var(--lens-y);
+  transform: translate(-50%, -50%);
+  --spin: 0deg;
+  animation: dial-spin-step var(--duration) infinite linear;
+  will-change: transform, --spin;
+}
+
+.dial-orbit-container .dial-orbit-wrapper {
+  left: calc(var(--lens-x) + var(--orbit-center-shift-x));
+}
+
+.dial-lens-orbit-center .dial-orbit-wrapper {
+  left: calc(
+    var(--lens-x) + var(--orbit-center-shift-x) + var(--lens-orbit-nudge-x)
+  );
+  top: calc(var(--lens-y) + var(--lens-orbit-nudge-y));
+}
+
+.dial-lens-orbit-invert-top .dial-orbit-wrapper {
+  left: calc(
+    var(--lens-x) + var(--orbit-center-shift-x) + var(--lens-orbit-nudge-x)
+  );
+  top: calc(
+    var(--lens-y) + var(--lens-orbit-nudge-y) + var(--lens-invert-top-nudge-y)
+  );
+  transform: translate(-50%, -50%) scaleY(-1);
+}
+
+.dial-lens-orbit-invert-bottom .dial-orbit-wrapper {
+  left: calc(
+    var(--lens-x) + var(--orbit-center-shift-x) + var(--lens-orbit-nudge-x)
+  );
+  top: calc(
+    var(--lens-y) + var(--lens-orbit-nudge-y) + var(--lens-invert-bottom-nudge-y)
+  );
+  transform: translate(-50%, -50%) scaleY(-1);
+}
+
+/* ===============================
+   WORDS ON A CIRCLE
+   =============================== */
+
+.dial-orbit-word {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1;
+  font-family: var(--font);
+  font-size: var(--size);
+  letter-spacing: var(--tracking);
+  color: var(--color);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  transform:
+    translate(-50%, -50%)
+    rotate(calc(var(--a) + var(--spin)))
+    translateX(calc(-1 * var(--orbit-radius)))
+    rotate(calc(-1 * (var(--a) + var(--spin))));
+  transform-origin: center center;
+}
+
+.dial-orbit-word-0  { --a: 0deg; }
+.dial-orbit-word-1  { --a: 25.7142857143deg; }
+.dial-orbit-word-2  { --a: 51.4285714286deg; }
+.dial-orbit-word-3  { --a: 77.1428571429deg; }
+.dial-orbit-word-4  { --a: 102.8571428571deg; }
+.dial-orbit-word-5  { --a: 128.5714285714deg; }
+.dial-orbit-word-6  { --a: 154.2857142857deg; }
+.dial-orbit-word-7  { --a: 180deg; }
+.dial-orbit-word-8  { --a: 205.7142857143deg; }
+.dial-orbit-word-9  { --a: 231.4285714286deg; }
+.dial-orbit-word-10 { --a: 257.1428571429deg; }
+.dial-orbit-word-11 { --a: 282.8571428571deg; }
+.dial-orbit-word-12 { --a: 308.5714285714deg; }
+.dial-orbit-word-13 { --a: 334.2857142857deg; }
+
+/* ===============================
+   OUTER BACKGROUND LOOK
+   =============================== */
+
+.dial-orbit-container .dial-orbit-word {
+  opacity: 0.24;
+  filter: blur(2.6px);
+}
+
+.dial-orbit-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0) 28%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0) 28%
+    );
+  pointer-events: none;
+}
+
+/* ===============================
+   BLUR OVERLAYS
+   =============================== */
+
+.dial-carousel-blur-top,
+.dial-carousel-blur-bottom,
+.dial-carousel-blur-right {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.dial-carousel-blur-top {
+  left: var(--lens-x);
+  top: calc(var(--lens-y) - 102px);
+  width: 420px;
+  height: 100px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(255, 255, 255, 0.82) 36%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  filter: blur(14px);
+}
+
+.dial-carousel-blur-bottom {
+  left: var(--lens-x);
+  top: calc(var(--lens-y) + 2px);
+  width: 420px;
+  height: 100px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(255, 255, 255, 0.82) 36%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  filter: blur(14px);
+}
+
+.dial-carousel-blur-right {
+  left: calc(var(--lens-x) + 175px);
+  top: var(--lens-y);
+  width: 132px;
+  height: 124px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(255, 255, 255, 0.72) 42%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  filter: blur(15px);
+}
+
+/* ===============================
+   GLASS PILL
+   =============================== */
+
+.dial-carousel-lens {
+  position: absolute;
+  left: var(--lens-x);
+  top: var(--lens-y);
+  width: var(--pill-w);
+  height: var(--pill-h);
+  transform: translate(-50%, -50%);
+  border-radius: var(--pill-r);
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 10;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.12),
+    0 10px 24px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.dial-carousel-lens::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.56),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+    inset 1px 0 0 rgba(255, 80, 80, 0.06),
+    inset -1px 0 0 rgba(90, 170, 255, 0.06);
+}
+
+/* ===============================
+   PILL WORD LAYERS
+   =============================== */
+
+.dial-lens-invert-top,
+.dial-lens-invert-bottom,
+.dial-lens-center {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.dial-lens-invert-top,
+.dial-lens-invert-bottom {
+  z-index: 6;
+}
+
+.dial-lens-invert-top {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 18%,
+    transparent 32%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 18%,
+    transparent 32%
+  );
+}
+
+.dial-lens-invert-bottom {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 68%,
+    black 82%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 68%,
+    black 82%,
+    black 100%
+  );
+}
+
+/* TOP — keep strong */
+.dial-lens-invert-top .dial-orbit-word {
+  opacity: 1;
+  color: rgba(20, 20, 20, 0.38);
+  filter: blur(0.1px);
+  text-shadow:
+    2.6px 0 rgba(255, 70, 70, 0.38),
+    -2.6px 0 rgba(70, 170, 255, 0.38);
+}
+
+/* BOTTOM — softer */
+.dial-lens-invert-bottom .dial-orbit-word {
+  opacity: 0.3;
+  color: rgba(20, 20, 20, 0.34);
+  filter: blur(0.08px);
+  text-shadow:
+    1.8px 0 rgba(255, 70, 70, 0.28),
+    -1.8px 0 rgba(70, 170, 255, 0.28);
+}
+
+.dial-lens-center {
+  z-index: 7;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 18%,
+    black 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 18%,
+    black 82%,
+    transparent 100%
+  );
+}
+
+.dial-lens-center .dial-orbit-word {
+  opacity: 1;
+  color: rgba(12, 12, 12, 1);
+  filter: none;
+  text-shadow: none;
+}
+
+
+
+/* ===============================
+   GLASS OVERLAYS
+   =============================== */
+
+.liquidGlass-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      120% 140% at 18% 12%,
+      rgba(255, 255, 255, 0.34) 0%,
+      rgba(255, 255, 255, 0.14) 45%,
+      rgba(255, 255, 255, 0.10) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.06)
+    );
+  backdrop-filter: blur(4px) saturate(1.04);
+  -webkit-backdrop-filter: blur(4px) saturate(1.04);
+}
+
+.liquidGlass-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 2px 2px 1px rgba(255, 255, 255, 0.46),
+    inset -2px -2px 2px rgba(0, 0, 0, 0.07);
+}
+
+.liquidGlass-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    90% 70% at 20% 15%,
+    rgba(255, 255, 255, 0.52) 0%,
+    rgba(255, 255, 255, 0.18) 35%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0.9;
+}
+
+.liquidGlass-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    85% 85% at 85% 90%,
+    rgba(0, 0, 0, 0.10) 0%,
+    rgba(0, 0, 0, 0.04) 45%,
+    rgba(0, 0, 0, 0) 75%
+  );
+  opacity: 0.65;
+}
+
+/* ===============================
+   STEP + HOLD DIAL ROTATION
+   =============================== */
+
+@keyframes dial-spin-step {
+  0%,
+  10% {
+    --spin: 0deg;
+    animation-timing-function: cubic-bezier(0.12, 0.78, 0.18, 1);
+  }
+
+  14.285%,
+  24.285% {
+    --spin: var(--step-angle);
+    animation-timing-function: cubic-bezier(0.12, 0.78, 0.18, 1);
+  }
+
+  28.57%,
+  38.57% {
+    --spin: calc(2 * var(--step-angle));
+    animation-timing-function: cubic-bezier(0.12, 0.78, 0.18, 1);
+  }
+
+  42.855%,
+  52.855% {
+    --spin: calc(3 * var(--step-angle));
+    animation-timing-function: cubic-bezier(0.12, 0.78, 0.18, 1);
+  }
+
+  57.14%,
+  67.14% {
+    --spin: calc(4 * var(--step-angle));
+    animation-timing-function: cubic-bezier(0.12, 0.78, 0.18, 1);
+  }
+
+  71.425%,
+  81.425% {
+    --spin: calc(5 * var(--step-angle));
+    animation-timing-function: cubic-bezier(0.12, 0.78, 0.18, 1);
+  }
+
+  85.71%,
+  95.71% {
+    --spin: calc(6 * var(--step-angle));
+    animation-timing-function: cubic-bezier(0.12, 0.78, 0.18, 1);
+  }
+
+  100% {
+    --spin: calc(7 * var(--step-angle));
+  }
+}
+
+/* ===============================
+   REDUCED MOTION
+   =============================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .dial-orbit-container .dial-orbit-wrapper,
+  .dial-lens-orbit-invert-top .dial-orbit-wrapper,
+  .dial-lens-orbit-invert-bottom .dial-orbit-wrapper,
+  .dial-lens-orbit-center .dial-orbit-wrapper {
+    animation: none;
+    --spin: 0deg;
+  }
+}
