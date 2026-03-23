@@ -372,24 +372,40 @@ body {
   );
 }
 
-/* TOP — keep strong */
+/* TOP */
 .dial-lens-invert-top .dial-orbit-word {
   opacity: 1;
-  color: rgba(20, 20, 20, 0.38);
-  filter: blur(0.1px);
+  color: rgba(20, 20, 20, 0.34);
+  filter: blur(1.5px);
   text-shadow:
-    2.6px 0 rgba(255, 70, 70, 0.38),
-    -2.6px 0 rgba(70, 170, 255, 0.38);
+    3.2px 0 rgba(255, 70, 70, 0.30),
+    -3.2px 0 rgba(70, 170, 255, 0.30),
+    0 0 1px rgba(255, 255, 255, 0.18);
+  transform:
+    translate(-50%, -50%)
+    rotate(calc(var(--a) + var(--spin)))
+    translateX(calc(-1 * var(--orbit-radius)))
+    rotate(calc(-1 * (var(--a) + var(--spin))))
+    scaleX(1.015)
+    skewX(-1.2deg);
 }
 
-/* BOTTOM — softer */
+/* BOTTOM */
 .dial-lens-invert-bottom .dial-orbit-word {
-  opacity: 0.3;
-  color: rgba(20, 20, 20, 0.34);
-  filter: blur(0.08px);
+  opacity: 0.40;
+  color: rgba(20, 20, 20, 0.30);
+  filter: blur(2px);
   text-shadow:
-    1.8px 0 rgba(255, 70, 70, 0.28),
-    -1.8px 0 rgba(70, 170, 255, 0.28);
+    3.2px 0 rgba(255, 70, 70, 0.22),
+    -3.2px 0 rgba(70, 170, 255, 0.22),
+    0 0 1px rgba(255, 255, 255, 0.12);
+  transform:
+    translate(-50%, -50%)
+    rotate(calc(var(--a) + var(--spin)))
+    translateX(calc(-1 * var(--orbit-radius)))
+    rotate(calc(-1 * (var(--a) + var(--spin))))
+    scaleX(1.01)
+    skewX(1deg);
 }
 
 .dial-lens-center {
